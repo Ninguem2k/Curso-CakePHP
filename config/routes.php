@@ -1,91 +1,47 @@
 <?php
-/**
- * Routes configuration.
- *
- * In this file, you set up routes to your controllers and their actions.
- * Routes are very important mechanism that allows you to freely connect
- * different URLs to chosen controllers and their actions (functions).
- *
- * It's loaded within the context of `Application::routes()` method which
- * receives a `RouteBuilder` instance `$routes` as method argument.
- *
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @license       https://opensource.org/licenses/mit-license.php MIT License
- */
 
 use Cake\Routing\Route\DashedRoute;
 use Cake\Routing\RouteBuilder;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 return static function (RouteBuilder $routes) {
-    /*
-     * The default class to use for all routes
-     *
-     * The following route classes are supplied with CakePHP and are appropriate
-     * to set as the default:
-     *
-     * - Route
-     * - InflectedRoute
-     * - DashedRoute
-     *
-     * If no call is made to `Router::defaultRouteClass()`, the class used is
-     * `Route` (`Cake\Routing\Route\Route`)
-     *
-     * Note that `Route` does not do any inflections on URLs which will result in
-     * inconsistently cased URLs when used with `{plugin}`, `{controller}` and
-     * `{action}` markers.
-     */
+    //Forma de definir as rotas da aplicação usando connect
+    // 1 Parametro define a URI
+    // 2 Parametro define o Controller
+    // 3 Parametro define o Metodo no Controller
+    // 4 Parametro define o Opções como metodo de comunicação [GET, POST, PUT, DELETE], nome da Rota e paramentros passados para o Controller
+
+    // $routes->connect('/', ['controller' => 'Home', 'action' => 'index'], ['_name' => 'home.index'])->setMethods(['GET']);
+    // $routes->connect('/about', ['controller' => 'About', 'action' => 'index'], ['_name' => 'about.index'])->setMethods(['POST', 'GET']);
+    // $routes->connect('/product/{id}', ['controller' => 'Product', 'action' => 'show'], ['_name' => 'product.show', 'pass' => ['id', 'name'], 'id' => '[0-9]+', 'name' => '[a-z]+'])->setMethods(['POST', 'GET']);
+
+    //Forma de definir as rotas da aplicação usando os Metodos como [GET, POST, DELETE e PUT]
+    // $routes->get('/', ['controller' => 'Home', 'action' => 'index'], 'home.index');
+    // $routes->get('/about', ['controller' => 'About', 'action' => 'index'], 'about.index');
+    // $routes->get('/product/{id}', ['controller' => 'Product', 'action' => 'show'], 'product.show',)->setPatterns(['id' => '[0-9]+', 'name' => '[a-z]+']);
+
+    //O Uso de *  faça com que tudo que passe após a URI seja parametros 
+    // $routes->connect('/clube/*', ['controller' => 'Clube', 'action' => 'index']);
+
+    //O Uso de **  faça com que tudo que passe após a URI seja parametro porem em um unica String 
+    // $routes->connect('/clube/**', ['controller' => 'Clube', 'action' => 'index']);
+
     $routes->setRouteClass(DashedRoute::class);
 
-    $routes->scope('/', function (RouteBuilder $builder) {
-        /*
-         * Here, we are connecting '/' (base path) to a controller called 'Pages',
-         * its action called 'display', and we pass a param to select the view file
-         * to use (in this case, templates/Pages/home.php)...
-         */
-        $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
-
-        /*
-         * ...and connect the rest of 'Pages' controller's URLs.
-         */
-        $builder->connect('/pages/*', 'Pages::display');
-
-        /*
-         * Connect catchall routes for all controllers.
-         *
-         * The `fallbacks` method is a shortcut for
-         *
-         * ```
-         * $builder->connect('/{controller}', ['action' => 'index']);
-         * $builder->connect('/{controller}/{action}/*', []);
-         * ```
-         *
-         * You can remove these routes once you've connected the
-         * routes you want in your application.
-         */
-        $builder->fallbacks();
+    // Agrupar rotaas
+    $routes->scope('/', function (RouteBuilder $routes) {
+        $routes->connect('/', ['controller' => 'Home', 'action' => 'index'], ['_name' => 'home.index'])->setMethods(['GET']);
+        $routes->connect('/about', ['controller' => 'About', 'action' => 'index'], ['_name' => 'about.index'])->setMethods(['POST', 'GET']);
+        $routes->connect('/product/{id}', ['controller' => 'Product', 'action' => 'show'], ['_name' => 'product.show', 'pass' => ['id', 'name'], 'id' => '[0-9]+', 'name' => '[a-z]+'])->setMethods(['POST', 'GET']);
     });
 
-    /*
-     * If you need a different set of middleware or none at all,
-     * open new scope and define routes there.
-     *
-     * ```
-     * $routes->scope('/api', function (RouteBuilder $builder) {
-     *     // No $builder->applyMiddleware() here.
-     *
-     *     // Parse specified extensions from URLs
-     *     // $builder->setExtensions(['json', 'xml']);
-     *
-     *     // Connect API actions here.
-     * });
-     * ```
-     */
+    // Agrupar rotaas
+    $routes->scope('/admin', function (RouteBuilder $routes) {
+        $routes->connect('/', ['controller' => 'Admin', 'action' => 'index'], ['_name' => 'admin.index'])->setMethods(['GET']);
+        $routes->connect('/users', ['controller' => 'AdminUsers', 'action' => 'index'], ['_name' => 'adminusers.index'])->setMethods(['GET']);
+        $routes->connect('/users/{id}', ['controller' => 'AdminUsers', 'action' => 'show'], ['_name' => 'adminusers.show', 'pass' => ['id'], 'id' => '[0-9]+'])->setMethods(['GET']);
+    });
+
+    //Caso não enconre nem uma rota 
+    $routes->fallbacks();
 };
