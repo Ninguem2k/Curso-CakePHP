@@ -8,6 +8,14 @@
 
 <h1>About - Index</h1>
 
+<ul>
+    <?php foreach ($users as $user) : ?>
+        <li>
+            <?= $user->id ?> : <?= $user->firstName ?>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
 <?php $this->start('sidebar'); ?>
 <?php echo $this->element('sidebar'); ?>
 <?php $this->end(); ?>
