@@ -12,7 +12,10 @@ class HomeController extends AppController
 {
     public function index()
     {
-        var_dump("Teste Home");
-        die();
+        $name = "Cássío G";
+        $age = 22;
+
+        $this->set(compact('name', 'age'));
+        $this->render('index', "master");
     }
 }
